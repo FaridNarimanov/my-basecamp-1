@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - My Basecamp</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+        }
+        .container {
+            margin: 0;
+            padding: 40px 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            width: 100%;
+            max-width: 400px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+        }
+        .page-title {
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .input-icon-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .input-icon-wrapper input {
+            margin: 0;
+            padding-right: 40px;
+            width: 100%;
+        }
+        .eye-icon {
+            position: absolute;
+            right: 12px;
+            cursor: pointer;
+            color: var(--muted);
+            display: flex;
+            transition: color 0.2s ease;
+        }
+        .eye-icon:hover {
+            color: var(--primary);
+        }
+        button[type="submit"] {
+            margin-top: 5px;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 6px;
+            width: 100%;
+        }
+        .footer-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .footer-link a {
+            color: var(--accent);
+            font-size: 14px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container form-container">
+        <h2 class="page-title">Login</h2>
+        <div id="msgBox" class="message-box"></div>
+        <form id="loginForm">
+            <input type="text" id="email" placeholder="Email or Username" required>
+            <div class="input-icon-wrapper">
+                <input type="password" id="password" placeholder="Password" required>
+                <span class="eye-icon" onclick="togglePassword('password')" title="Show/Hide Password">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </span>
+            </div>
+            <button type="submit">Sign In</button>
+        </form>
+        <div class="footer-link">
+            <span style="color: var(--muted); font-size: 14px;">Don't have an account?</span> <a href="/register">Register</a>
+        </div>
+    </div>
+
+    <script>
+        const msgBox = document.getElementById('msgBox');
+        function showMessage(text, isError = false) {
+            msgBox.textContent = text;
+            msgBox.className = 'message-box ' + (isError ? 'error' : 'success');
+        }
+
+        // Toggles password visibility
+        function togglePassword(id) {
+            const input = document.getElementById(id);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            try {
+                const response = await fetch('/sessions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    showMessage('Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = result.role === 'admin' ? '/admin' : '/dashboard';
+                    }, 900);
+                } else {
+                    showMessage(result.message, true);
+                }
+            } catch {
+                showMessage("A system error occurred.", true);
+            }
+        });
+    </script>
+</body>
+</html>

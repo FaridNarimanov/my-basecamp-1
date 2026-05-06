@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Project – My Basecamp</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+        }
+        .container {
+            margin: 0;
+            padding: 40px 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            width: 100%;
+            max-width: 440px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+        }
+        .page-title {
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        .subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        label {
+            display: block;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        input, textarea { margin: 0 0 18px 0; }
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .btn-row button {
+            flex: 1;
+            margin: 0;
+            padding: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+        .btn-back {
+            background: #f3f4f6;
+            color: var(--text) !important;
+            border: 1px solid var(--border);
+        }
+        .btn-back:hover { background: #e5e7eb; color: var(--primary) !important;}
+        .btn-submit { background: var(--accent); color: white; border: none;}
+        .btn-submit:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <div class="container form-container">
+        <h2 class="page-title">New Project</h2>
+        <p class="subtitle">Fill in the details to create your workspace</p>
+
+        <div id="msgBox" class="message-box"></div>
+
+        <form id="projectForm">
+            <label for="name">Project Name</label>
+            <input type="text" id="name" placeholder="e.g. Website Redesign" required>
+
+            <label for="description">Description</label>
+            <textarea id="description" placeholder="What is this project about?" required></textarea>
+
+            <div class="btn-row">
+                <button type="button" class="btn-back" onclick="window.location.href='/dashboard'">
+                    Cancel
+                </button>
+                <button type="submit" class="btn-submit">
+                    Create Project
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const msgBox = document.getElementById('msgBox');
+        function showMessage(text, isError = false) {
+            msgBox.textContent = text;
+            msgBox.className = 'message-box ' + (isError ? 'error' : 'success');
+        }
+
+        document.getElementById('projectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const description = document.getElementById('description').value;
+            try {
+                const response = await fetch('/projects', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description })
+                });
+                if (response.ok) {
+                    showMessage('Project created successfully!');
+                    setTimeout(() => window.location.href = '/dashboard', 900);
+                } else {
+                    showMessage('Error creating project.', true);
+                }
+            } catch {
+                showMessage("A system error occurred.", true);
+            }
+        });
+    </script>
+</body>
+</html>
