@@ -4,115 +4,20 @@
     <meta charset="UTF-8">
     <title>Project Details</title>
     <link rel="stylesheet" href="/style.css">
-    <style>
-        .layout { display: flex; gap: 30px; align-items: flex-start; max-width: 1200px; margin: 0 auto;}
-        .main-content { flex: 3; display: flex; flex-direction: column; gap: 24px;}
-        .sidebar { flex: 1; display: flex; flex-direction: column; gap: 8px; position: sticky; top: 20px; background: var(--card-bg); padding: 15px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow);}
-        
-        .sidebar-btn { background-color: transparent; color: var(--text); padding: 12px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; text-align: left; transition: 0.2s; display: flex; align-items: center; font-size: 14px; width: 100%; }
-        .sidebar-btn svg { margin-right: 12px; flex-shrink: 0; color: var(--muted); }
-        .sidebar-btn:hover { background-color: #f3f4f6; color: var(--primary); }
-        .sidebar-btn:hover svg { color: var(--accent); }
-        .sidebar-btn.edit { background-color: #eff6ff; color: var(--accent); font-weight: 600; margin-bottom: 10px; border: 1px dashed #bfdbfe;}
-        .sidebar-btn.edit svg { color: var(--accent); }
-        .sidebar-btn.edit:hover { background-color: #dbeafe; }
-
-        /* DÜZƏLİŞ: Düymələrin tam uzanmasının qarşısı alındı (width: auto) */
-        .btn-action-btn { 
-            background-color: var(--accent) !important; 
-            color: white !important; 
-            padding: 10px 24px !important; 
-            border-radius: 6px !important; 
-            font-weight: 500 !important; 
-            border: none !important; 
-            cursor: pointer !important; 
-            font-size: 14px !important;
-            width: auto !important; 
-            flex-shrink: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-        .btn-action-btn:hover { background-color: #2563eb !important; }
-
-        /* DÜZƏLİŞ: Input xanalarının böyüməsi və düymə ilə balansı yaradıldı */
-        .input-row { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; width: 100%; }
-        .input-row input[type="text"] { 
-            margin: 0; 
-            flex-grow: 1; 
-            padding: 12px 16px; 
-            border: 1px solid var(--border); 
-            border-radius: 6px; 
-            font-size: 14px; 
-            width: 100%; 
-            transition: 0.2s;
-        }
-        .input-row input[type="text"]:focus { 
-            outline: none; 
-            border-color: var(--accent); 
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); 
-        }
-
-        .chat-msg { background: #f9fafb; padding: 15px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px; }
-        
-        .task-item { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid var(--border); transition: 0.2s;}
-        .task-item:hover { background: #f9fafb; border-radius: 6px; }
-        .task-item input { margin-right: 12px; width: 18px; height: 18px; accent-color: var(--success); cursor: pointer;}
-        .task-item span { font-size: 14px; color: var(--text); }
-        .task-item span.done { text-decoration: line-through; color: var(--muted); }
-        
-        .member-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border); margin-bottom: 8px; border-radius: 6px; transition: 0.2s;}
-        .member-item:hover { background: #f9fafb; }
-        .member-name { font-weight: 600; color: var(--primary); display: flex; align-items: center; gap: 10px;}
-        .member-role { color: white; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
-        .role-owner { background-color: var(--danger); }
-        .role-admin { background-color: var(--warning); }
-        .role-viewer { background-color: var(--accent); }
-
-        .project-header-container { background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: var(--radius); margin-bottom: 24px; box-shadow: var(--shadow); max-width: 1200px; margin-left: auto; margin-right: auto;}
-        .project-header-container h1 { font-size: 24px; font-weight: 700; color: var(--primary); margin: 0 0 8px 0; }
-        .project-header-container p { color: var(--muted); font-size: 15px; margin: 0; }
-
-        .custom-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
-        .custom-modal-content { background-color: #fff; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.15); box-sizing: border-box; }
-        .custom-modal-content h3 { margin-top: 0; color: var(--primary); font-size: 20px; margin-bottom: 10px; font-weight: 600;}
-        .custom-modal-content p { color: var(--muted); margin-bottom: 25px; line-height: 1.5; font-size: 14px;}
-        .filter-btn { background-color: #f3f4f6; border: 1px solid var(--border); padding: 10px 20px; color: var(--text); cursor: pointer; border-radius: 6px; font-weight: 500; transition: 0.2s; font-size: 14px; }
-        .filter-btn:hover { background-color: #e5e7eb; }
-
-        /* Geri qayıtmaq oxu üçün xüsusi stillər */
-        .back-link {
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            color: var(--text); 
-            text-decoration: none; 
-            font-weight: 500; 
-            font-size: 14px; 
-            transition: 0.2s;
-            padding: 8px 12px;
-            border-radius: 6px;
-        }
-        .back-link:hover {
-            color: var(--accent);
-            background-color: #f3f4f6;
-        }
-    </style>
 </head>
-<body>
-    <div class="top-navbar" style="max-width: 1200px; margin: 0 auto; padding: 20px 0; display: flex; justify-content: space-between; align-items: center;">
+<body class="project-page">
+    <div class="top-navbar">
         <!-- DÜZƏLİŞ: Geri qayıtmaq oxu SVG ikonla əvəzləndi -->
         <a href="/dashboard" class="back-link">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             Back to Dashboard
         </a>
-        <div style="display: flex; gap: 20px;">
-            <a href="/edit_profile" style="display: flex; align-items: center; gap: 8px; color: var(--text); text-decoration: none; font-weight: 500; font-size: 14px;">
+        <div class="nav-actions">
+            <a href="/edit_profile" class="project-nav-link">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 Profile
             </a>
-            <button id="logoutBtn" style="background: none; border: none; color: var(--text); font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 0;">
+            <button id="logoutBtn" class="project-logout-btn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                 Logout
             </button>
@@ -130,19 +35,19 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                 Manage Project
             </button>
-            <button class="sidebar-btn" onclick="document.getElementById('discussionsSection').scrollIntoView({behavior: 'smooth'})">
+            <button class="sidebar-btn" onclick="document.getElementById('discussionsSection').scrollIntoView()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><line x1="9" y1="9" x2="15" y2="9"></line><line x1="9" y1="13" x2="15" y2="13"></line></svg>
                 Discussions
             </button>
-            <button class="sidebar-btn" onclick="document.getElementById('tasksSection').scrollIntoView({behavior: 'smooth'})">
+            <button class="sidebar-btn" onclick="document.getElementById('tasksSection').scrollIntoView()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
                 Tasks
             </button>
-            <button class="sidebar-btn" onclick="document.getElementById('membersSection').scrollIntoView({behavior: 'smooth'})">
+            <button class="sidebar-btn" onclick="document.getElementById('membersSection').scrollIntoView()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                 Members
             </button>
-            <button class="sidebar-btn" onclick="document.getElementById('attachmentsSection').scrollIntoView({behavior: 'smooth'})">
+            <button class="sidebar-btn" onclick="document.getElementById('attachmentsSection').scrollIntoView()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
                 Attachments
             </button>
@@ -156,7 +61,7 @@
                     <input type="text" id="newDiscussion" placeholder="Type a message...">
                     <button id="btnDiscussion" class="btn-action-btn">Send</button>
                 </div>
-                <div id="discussionsList" style="min-height: 50px; margin-top: 20px;"></div>
+                <div id="discussionsList" class="list-min-height list-space-lg"></div>
             </div>
 
             <div class="section-box" id="tasksSection">
@@ -165,26 +70,26 @@
                     <input type="text" id="newTask" placeholder="What needs to be done?">
                     <button id="btnTask" class="btn-action-btn">Add Task</button>
                 </div>
-                <div id="tasksList" style="margin-top: 20px;"></div>
+                <div id="tasksList" class="list-space-lg"></div>
             </div>
 
             <div class="section-box" id="membersSection">
                 <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Project Members</h3>
-                <div id="membersList" style="margin-top: 15px;"></div>
+                <div id="membersList" class="list-space-md"></div>
             </div>
 
             <div class="section-box" id="attachmentsSection">
                 <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg> Attachments</h3>
-                <div class="input-row" style="background: #f9fafb; border: 1px dashed var(--border); padding: 15px; border-radius: 6px; justify-content: space-between;">
-                    <div style="display: flex; align-items: center; gap: 12px; flex-grow: 1;">
-                        <input type="file" id="newAttachment" style="display: none;">
-                        <label for="newAttachment" style="background-color: #9ca3af; color: white; cursor: pointer; padding: 10px 16px; margin:0; border-radius: 6px; font-weight: 500; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; width: auto;">
+                <div class="input-row attachment-dropzone">
+                    <div class="attachment-input-wrap">
+                        <input type="file" id="newAttachment" class="file-input-hidden">
+                        <label for="newAttachment" class="file-label">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
                             Choose File
                         </label>
-                        <span id="fileNameDisplay" style="font-size: 13px; color: var(--muted);">No file chosen</span>
+                        <span id="fileNameDisplay" class="file-name-display">No file chosen</span>
                     </div>
-                    <button id="btnAttachment" class="btn-action-btn" style="height: auto; margin: 0;">Upload</button>
+                    <button id="btnAttachment" class="btn-action-btn btn-upload">Upload</button>
                 </div>
                 <div id="attachmentsList"></div>
             </div>
@@ -195,22 +100,22 @@
     <!-- Modals -->
     <div id="deleteAttachmentModal" class="custom-modal">
         <div class="custom-modal-content">
-            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2" style="margin-bottom: 15px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <svg class="modal-icon" width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
             <h3>Delete File?</h3>
             <p>Are you sure you want to delete this file? This action cannot be undone.</p>
-            <div style="display: flex; gap: 10px;">
-                <button id="cancelFileDeleteBtn" class="filter-btn" style="flex: 1;">Cancel</button>
-                <button id="confirmFileDeleteBtn" style="background: var(--danger); color: white; border: none; padding: 10px; border-radius: 6px; flex: 1; font-weight: 500; cursor: pointer;">Delete</button>
+            <div class="modal-actions">
+                <button id="cancelFileDeleteBtn" class="filter-btn modal-action-btn">Cancel</button>
+                <button id="confirmFileDeleteBtn" class="modal-danger-btn">Delete</button>
             </div>
         </div>
     </div>
 
     <div id="customAlertModal" class="custom-modal">
         <div class="custom-modal-content">
-            <svg id="alertIcon" width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="margin-bottom: 15px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <svg id="alertIcon" class="modal-icon" width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
             <h3 id="alertTitle">Alert</h3>
             <p id="alertMessage">Message goes here.</p>
-            <button id="closeAlertBtn" style="background: var(--accent); color: white; width: 100%; border: none; padding: 12px; border-radius: 6px; font-weight: 500; cursor: pointer;">OK</button>
+            <button id="closeAlertBtn" class="modal-primary-btn">OK</button>
         </div>
     </div>
 
@@ -227,22 +132,23 @@
             const btn = document.getElementById('closeAlertBtn');
 
             msgEl.textContent = message;
+            btn.classList.remove('alert-btn-error', 'alert-btn-warning', 'alert-btn-success');
             
             if (type === 'error') {
                 titleEl.textContent = 'Error';
                 iconEl.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>';
                 iconEl.setAttribute('stroke', 'var(--danger)');
-                btn.style.background = 'var(--danger)';
+                btn.classList.add('alert-btn-error');
             } else if (type === 'warning') {
                 titleEl.textContent = 'Warning';
                 iconEl.innerHTML = '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line>';
                 iconEl.setAttribute('stroke', 'var(--warning)');
-                btn.style.background = 'var(--warning)';
+                btn.classList.add('alert-btn-warning');
             } else {
                 titleEl.textContent = 'Success';
                 iconEl.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
                 iconEl.setAttribute('stroke', 'var(--success)');
-                btn.style.background = 'var(--success)';
+                btn.classList.add('alert-btn-success');
             }
 
             modal.style.display = 'flex';
@@ -290,7 +196,7 @@
             const response = await fetch(`/projects/${projectId}/discussions`);
             const discussions = await response.json();
             const list = document.getElementById('discussionsList');
-            if(discussions.length === 0) { list.innerHTML = '<p style="color: var(--muted); font-size: 14px;">No discussions yet.</p>'; return; }
+            if(discussions.length === 0) { list.innerHTML = '<p class="empty-message">No discussions yet.</p>'; return; }
             
             const defaultAvatar = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2JkYzNjNyI+PHBhdGggZD0iTTEyIDEyYzIuMjEgMCA0LTEuNzkgNC00cy0xLjc5LTQtNC00LTQgMS43OS00IDQgMS43OSA0IDQgNHptMCAyYy0yLjY3IDAtOCAxLjM0LTggNHYyaDE2di0yYzAtMi42Ni01LjMzLTQtOC00eiIvPjwvc3ZnPg==';
 
@@ -301,14 +207,14 @@
                 const timeAgo = timeSince(d.created_at);
 
                 return `
-                <div class="chat-msg" style="display: flex; gap: 15px; align-items: flex-start;">
-                    <a href="${profileLink}" style="flex-shrink: 0;"><img src="${avatarSrc}" alt="Avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border);"></a>
-                    <div style="flex-grow: 1;">
-                        <div style="margin-bottom: 2px; display: flex; align-items: center; gap: 8px;">
-                            <a href="${profileLink}" style="text-decoration: none; color: var(--primary); font-weight: 600; font-size: 14px;">${displayName}</a>
-                            <span style="color: var(--muted); font-size: 12px;">• ${timeAgo}</span>
+                <div class="chat-msg chat-msg-layout">
+                    <a href="${profileLink}" class="profile-link-small"><img src="${avatarSrc}" alt="Avatar" class="avatar-small"></a>
+                    <div class="chat-body">
+                        <div class="chat-meta">
+                            <a href="${profileLink}" class="profile-name-link">${displayName}</a>
+                            <span class="time-ago">• ${timeAgo}</span>
                         </div>
-                        <div style="color: var(--text); font-size: 14px; line-height: 1.5;">${d.content}</div>
+                        <div class="chat-content">${d.content}</div>
                     </div>
                 </div>`;
             }).join('');
@@ -331,7 +237,7 @@
             const response = await fetch(`/projects/${projectId}/tasks`);
             const tasks = await response.json();
             const list = document.getElementById('tasksList');
-            if(tasks.length === 0) { list.innerHTML = '<p style="color: var(--muted); font-size: 14px;">No tasks assigned.</p>'; return; }
+            if(tasks.length === 0) { list.innerHTML = '<p class="empty-message">No tasks assigned.</p>'; return; }
             list.innerHTML = tasks.map(t => `
                 <div class="task-item">
                     <input type="checkbox" ${t.is_completed ? 'checked' : ''} onchange="toggleTask(${t.id}, this.checked)">
@@ -364,10 +270,10 @@
                 const profileLink = m.username ? `/user_profile?username=${m.username}` : '#';
 
                 return `
-                <a href="${profileLink}" style="text-decoration: none; display: block; color: inherit;">
+                <a href="${profileLink}" class="profile-link-block">
                     <div class="member-item">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <img src="${avatarSrc}" alt="Avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border);">
+                        <div class="member-info-row">
+                            <img src="${avatarSrc}" alt="Avatar" class="avatar-small">
                             <span class="member-name">${displayName}</span>
                         </div>
                         <span class="member-role ${roleClass}">${m.role}</span>
@@ -380,12 +286,10 @@
             const display = document.getElementById('fileNameDisplay');
             if (this.files && this.files.length > 0) {
                 display.textContent = this.files[0].name;
-                display.style.color = 'var(--primary)';
-                display.style.fontWeight = '600';
+                display.classList.add('has-file');
             } else {
                 display.textContent = 'No file chosen';
-                display.style.color = 'var(--muted)';
-                display.style.fontWeight = 'normal';
+                display.classList.remove('has-file');
             }
         });
 
@@ -394,19 +298,19 @@
             const data = await response.json();
             const list = document.getElementById('attachmentsList');
             
-            if(data.attachments.length === 0) { list.innerHTML = '<p style="color: var(--muted); font-size: 14px;">No attachments yet.</p>'; return; }
+            if(data.attachments.length === 0) { list.innerHTML = '<p class="empty-message">No attachments yet.</p>'; return; }
             const canDelete = data.role === 'owner' || data.role === 'admin';
 
             list.innerHTML = data.attachments.map(a => {
-                const deleteBtn = canDelete ? `<button onclick="triggerFileDelete(${a.id})" style="background: transparent; color: var(--danger); border: none; padding: 6px; cursor: pointer; border-radius: 4px; display: flex; align-items: center; transition: 0.2s;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='transparent'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>` : '';
+                const deleteBtn = canDelete ? `<button onclick="triggerFileDelete(${a.id})" class="icon-btn icon-btn-delete"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>` : '';
                 return `
-                <div class="member-item" style="border: 1px solid var(--border);">
-                    <span class="member-name" style="font-size: 13px;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" style="margin-right:6px;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg> 
+                <div class="member-item attachment-row">
+                    <span class="member-name attachment-name">
+                        <svg class="attachment-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg> 
                         ${a.file_name}
                     </span>
-                    <div style="display: flex; gap: 5px; align-items: center;">
-                        <a href="${a.file_path}" download style="background: transparent; color: var(--accent); padding: 6px; border-radius: 4px; display: flex; align-items: center; transition: 0.2s;" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='transparent'">
+                    <div class="attachment-actions">
+                        <a href="${a.file_path}" download class="icon-btn icon-btn-download">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         </a>
                         ${deleteBtn}
@@ -434,7 +338,7 @@
             const formData = new FormData();
             formData.append('file', fileInput.files[0]);
             const res = await fetch(`/projects/${projectId}/attachments`, { method: 'POST', body: formData });
-            if (res.ok) { fileInput.value = ''; document.getElementById('fileNameDisplay').textContent = 'No file chosen'; document.getElementById('fileNameDisplay').style.color = 'var(--muted)'; document.getElementById('fileNameDisplay').style.fontWeight = 'normal'; loadAttachments(); }
+            if (res.ok) { fileInput.value = ''; document.getElementById('fileNameDisplay').textContent = 'No file chosen'; document.getElementById('fileNameDisplay').classList.remove('has-file'); loadAttachments(); }
             else showCustomAlert("Error uploading file.", "error");
         });
         

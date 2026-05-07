@@ -4,77 +4,8 @@
     <meta charset="UTF-8">
     <title>Login - My Basecamp</title>
     <link rel="stylesheet" href="/style.css">
-    <style>
-        body {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg);
-        }
-        .container {
-            margin: 0;
-            padding: 40px 30px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            width: 100%;
-            max-width: 400px;
-            background: var(--card-bg);
-            border-radius: var(--radius);
-        }
-        .page-title {
-            color: var(--primary);
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        .input-icon-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .input-icon-wrapper input {
-            margin: 0;
-            padding-right: 40px;
-            width: 100%;
-        }
-        .eye-icon {
-            position: absolute;
-            right: 12px;
-            cursor: pointer;
-            color: var(--muted);
-            display: flex;
-            transition: color 0.2s ease;
-        }
-        .eye-icon:hover {
-            color: var(--primary);
-        }
-        button[type="submit"] {
-            margin-top: 5px;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: 600;
-            border-radius: 6px;
-            width: 100%;
-        }
-        .footer-link {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .footer-link a {
-            color: var(--accent);
-            font-size: 14px;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .footer-link a:hover {
-            text-decoration: underline;
-        }
-    </style>
 </head>
-<body>
+<body class="form-page login-page">
     <div class="container form-container">
         <h2 class="page-title">Login</h2>
         <div id="msgBox" class="message-box"></div>
@@ -89,7 +20,7 @@
             <button type="submit">Sign In</button>
         </form>
         <div class="footer-link">
-            <span style="color: var(--muted); font-size: 14px;">Don't have an account?</span> <a href="/register">Register</a>
+            <span>Don't have an account?</span> <a href="/register">Register</a>
         </div>
     </div>
 
@@ -100,7 +31,6 @@
             msgBox.className = 'message-box ' + (isError ? 'error' : 'success');
         }
 
-        // Toggles password visibility
         function togglePassword(id) {
             const input = document.getElementById(id);
             input.type = input.type === 'password' ? 'text' : 'password';

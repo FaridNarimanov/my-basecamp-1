@@ -4,120 +4,8 @@
     <meta charset="UTF-8">
     <title>Edit Profile</title>
     <link rel="stylesheet" href="/style.css">
-    <style>
-        body { 
-            background-color: var(--bg); 
-            display: block !important; 
-        }
-        
-        .profile-container { 
-            width: 100%; 
-            max-width: 800px; 
-            margin: 50px auto; 
-            background: var(--card-bg); 
-            padding: 40px; 
-            border-radius: var(--radius); 
-            box-shadow: var(--shadow); 
-            border: 1px solid var(--border);
-            box-sizing: border-box;
-        }
-        
-        /* Fixed Navbar: transparent background, auto width for buttons */
-        .top-navbar { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px solid var(--border); 
-            padding-bottom: 15px; 
-            margin-bottom: 40px; 
-            width: 100%; 
-            box-sizing: border-box;
-            background: transparent !important;
-        }
-        .top-navbar a, .top-navbar button { 
-            background: transparent !important; 
-            border: none; 
-            color: var(--text); 
-            font-size: 14px; 
-            font-weight: 500; 
-            text-decoration: none; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            transition: 0.2s; 
-            padding: 8px 12px; 
-            border-radius: 6px;
-            font-family: inherit; 
-            width: max-content !important; 
-        }
-        .top-navbar a:hover, .top-navbar button:hover { 
-            color: var(--accent); 
-            background-color: #f3f4f6 !important;
-        }
-        .top-navbar .logout-btn:hover { 
-            color: var(--danger); 
-            background-color: #fee2e2 !important;
-        }
-
-        .avatar-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 40px; }
-        .avatar-preview { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); margin-bottom: 15px; background: #fdfdfd; box-shadow: var(--shadow);}
-        
-        /* Fixed Upload Button: restricted width */
-        .avatar-upload-btn { 
-            background-color: #f3f4f6 !important; 
-            color: var(--text); 
-            padding: 8px 16px; 
-            border-radius: 20px; 
-            cursor: pointer; 
-            font-size: 13px; 
-            font-weight: 500; 
-            border: 1px solid var(--border); 
-            transition: 0.2s; 
-            display: flex; 
-            align-items: center; 
-            gap: 6px;
-            width: max-content !important;
-        }
-        .avatar-upload-btn:hover { background-color: #e5e7eb !important;}
-        #avatarInput { display: none; }
-
-        .profile-header { text-align: center; margin-bottom: 30px; }
-        .profile-header h1 { font-family: inherit; color: var(--primary); margin-bottom: 5px; font-size: 26px; font-weight: 700;}
-        
-        .form-row { display: flex; gap: 20px; margin-bottom: 20px; }
-        .form-group { flex: 1; }
-        .form-group label { display: block; color: var(--text); margin-bottom: 8px; font-size: 13px; font-weight: 600; }
-        .form-group input { width: 100%; padding: 12px 15px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; box-sizing: border-box; font-family: inherit; margin:0; transition: border-color 0.2s;}
-        .form-group input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);} 
-        
-        .pwd-input-wrapper { position: relative; display: flex; align-items: center; }
-        .pwd-input-wrapper input { padding-right: 45px; }
-        .eye-icon { position: absolute; right: 15px; cursor: pointer; color: var(--muted); transition: 0.2s; display: flex; align-items: center; justify-content: center;}
-        .eye-icon:hover { color: var(--primary); }
-
-        .security-section { background: #f9fafb; border: 1px solid var(--border); padding: 25px; border-radius: var(--radius); margin-top: 30px; margin-bottom: 25px;}
-        .security-section h3 { margin-top: 0; color: var(--primary); font-size: 16px; font-weight: 600; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px;}
-
-        /* Fixed Save Button: centered and auto width */
-        .btn-save { 
-            background-color: var(--accent) !important; 
-            color: white; 
-            border: none; 
-            border-radius: 6px; 
-            padding: 12px 32px; 
-            width: max-content !important; 
-            font-size: 14px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            display: block;
-            margin: 25px auto 0 auto; 
-        }
-        .btn-save:hover { background-color: #2563eb !important; transform: translateY(-1px);}
-    </style>
 </head>
-<body>
+<body class="edit-profile-page">
     <div class="profile-container">
         
         <div class="top-navbar">
@@ -176,7 +64,7 @@
                 <div class="form-group"></div> 
             </div>
 
-            <div class="form-row" style="margin-bottom: 0;">
+            <div class="form-row form-row-tight">
                 <div class="form-group">
                     <label>New Password</label>
                     <div class="pwd-input-wrapper">
@@ -203,8 +91,8 @@
         function showMessage(text, isError = false) {
             msgBox.textContent = text;
             msgBox.className = 'message-box ' + (isError ? 'error' : 'success');
-            msgBox.style.display = 'block';
-            setTimeout(() => msgBox.style.display = 'none', 4000);
+            msgBox.classList.add('is-visible');
+            setTimeout(() => msgBox.classList.remove('is-visible'), 4000);
         }
 
         function togglePwd(id) {

@@ -1,1 +1,4 @@
 node_modules/
+basecamp.db
+public/uploads/
+.env
