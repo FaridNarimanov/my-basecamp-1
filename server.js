@@ -283,7 +283,6 @@ app.delete('/projects/:id', requireLogin, async (req, res) => {
     }
 });
 
-// BUG FIX: Üzvlər də layihəyə girə bilir
 app.get('/projects/:id', requireLogin, requireProjectAccess, (req, res) => {
     db.get("SELECT * FROM projects WHERE id = ?", [req.params.id], (err, project) => {
         if (err || !project) return res.status(404).json({ message: "Project not found." });
@@ -351,7 +350,6 @@ app.get('/projects/:id/members', requireLogin, requireProjectAccess, (req, res) 
     });
 });
 
-// YENİLƏNMİŞ: Layihədən üzv silmək API-si (İndi :id işlətdik deyə qoruyucu tam düzgün işləyəcək)
 app.delete('/projects/:id/members/:username', requireLogin, requireProjectAccess, (req, res) => {
     db.get("SELECT id FROM users WHERE username = ?", [req.params.username], (err, user) => {
         if (err || !user) return res.status(404).json({ message: "User not found." });
@@ -383,7 +381,6 @@ app.delete('/projects/:id/members/:username', requireLogin, requireProjectAccess
     });
 });
 
-// YENİ: Üzvün rolunu dəyişdirmək üçün API (Make Admin / Make Viewer)
 app.patch('/projects/:id/members/:username/role', requireLogin, requireProjectAccess, (req, res) => {
     const role = normalizeProjectRole(req.body.role);
     if (!role) return res.status(400).json({ message: "Invalid role. Allowed roles are admin and viewer." });
@@ -457,7 +454,6 @@ app.post('/projects/:id/tasks', requireLogin, requireProjectAccess, (req, res) =
     });
 });
 
-// BUG FIX: Task tamamlama endpoint-i
 app.patch('/tasks/:taskId', requireLogin, async (req, res) => {
     try {
         const task = await dbGet("SELECT id, project_id FROM tasks WHERE id = ?", [req.params.taskId]);
@@ -480,7 +476,6 @@ app.patch('/tasks/:taskId', requireLogin, async (req, res) => {
     }
 });
 
-// YENİLƏNMİŞ: Faylları və istifadəçinin layihədəki rolunu gətirən API
 app.get('/projects/:id/attachments', requireLogin, requireProjectAccess, (req, res) => {
     db.get(`
         SELECT p.user_id as owner_id, pm.role 
@@ -501,7 +496,6 @@ app.get('/projects/:id/attachments', requireLogin, requireProjectAccess, (req, r
     });
 });
 
-// YENİ: Faylı silmək üçün API (Yalnız Owner və Admin üçün)
 app.delete('/projects/:id/attachments/:attachmentId', requireLogin, requireProjectAccess, async (req, res) => {
     try {
         const accessInfo = await dbGet(`
@@ -519,7 +513,6 @@ app.delete('/projects/:id/attachments/:attachmentId', requireLogin, requireProje
             return res.status(403).json({ message: "Only project owner or admins can delete files." });
         }
 
-        // Faylı əvvəlcə serverin (public/uploads) qovluğundan, sonra isə bazadan silirik
         const file = await dbGet("SELECT file_path FROM attachments WHERE id = ? AND project_id = ?", [req.params.attachmentId, req.params.id]);
         if (!file) return res.status(404).json({ message: "File not found" });
 
