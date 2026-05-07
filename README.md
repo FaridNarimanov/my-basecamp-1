@@ -231,17 +231,6 @@ The following tables are created automatically:
 * tasks
 * attachments
 
-The database file should not be committed or submitted unless specifically required.
-
-Recommended ignored files:
-
-```bash
-node_modules/
-basecamp.db
-public/uploads/
-.env
-```
-
 ## The Core Team
 
 Farid Narimanov
