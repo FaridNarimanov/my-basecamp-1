@@ -55,6 +55,18 @@ const showUser = async (req, res) => {
     }
 };
 
+const getCurrentUser = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.session.userId, {
+            attributes: ['id', 'name', 'username', 'email', 'role']
+        });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ message: 'Database error' });
+    }
+};
+
 const getUserByUsername = async (req, res) => {
     try {
         const user = await User.findOne({
@@ -124,6 +136,7 @@ const destroyUser = async (req, res) => {
 module.exports = {
     createUser,
     showUser,
+    getCurrentUser,
     getUserByUsername,
     destroyUser,
     publicUserAttributes

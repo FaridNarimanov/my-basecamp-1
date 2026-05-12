@@ -6,6 +6,7 @@ const { requireLogin, requireAdmin } = require('../middleware/auth');
 const router = express.Router();
 
 router.post('/users', userController.createUser);
+router.get('/api/me', requireLogin, userController.getCurrentUser);
 router.get('/users/:id', requireLogin, userController.showUser);
 router.delete('/users/:id', requireLogin, userController.destroyUser);
 router.patch('/users/:id/admin', requireAdmin, adminController.makeAdmin);

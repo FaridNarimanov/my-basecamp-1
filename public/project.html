@@ -81,7 +81,7 @@
                 <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg> Attachments</h3>
                 <div class="input-row attachment-dropzone">
                     <div class="attachment-input-wrap">
-                        <input type="file" id="newAttachment" class="file-input-hidden">
+                        <input type="file" id="newAttachment" class="file-input-hidden" accept=".png,.jpg,.jpeg,.webp,.pdf,image/png,image/jpeg,image/webp,application/pdf">
                         <label for="newAttachment" class="file-label">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
                             Choose File
@@ -90,6 +90,7 @@
                     </div>
                     <button id="btnAttachment" class="btn-action-btn btn-upload">Upload</button>
                 </div>
+                <p class="upload-guidance">Allowed files: PNG, JPG/JPEG, WebP, PDF. Max size: 5MB.</p>
                 <div id="attachmentsList"></div>
             </div>
 

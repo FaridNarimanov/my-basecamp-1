@@ -124,6 +124,12 @@ User deletion rules:
 
 Only global admins can use admin actions. Project member roles are separate from the global `users.role`.
 
+Admin notes:
+
+- If no global admin exists yet, the first registered user becomes the global admin automatically.
+- Global admins can manage users from the admin panel at `/admin`.
+- Normal users cannot access the admin panel or admin API actions.
+
 ## Security
 
 - Passwords are hashed with bcrypt
@@ -133,6 +139,7 @@ Only global admins can use admin actions. Project member roles are separate from
 - Upload size is limited to 5MB
 - Attachments allow PNG, JPEG/JPG, WebP, and PDF
 - Profile pictures allow PNG, JPEG/JPG, and WebP
+- Attachment uploads are limited to PNG, JPG/JPEG, WebP, or PDF files with a maximum size of 5MB
 - Stored upload filenames are random
 - Original filenames are cleaned before display
 - Upload deletion is restricted to `public/uploads`

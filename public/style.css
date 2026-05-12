@@ -367,6 +367,10 @@ button {
     align-items: center;
 }
 
+.admin-panel-link {
+    display: none;
+}
+
 .custom-modal {
     display: none;
     position: fixed;
@@ -961,6 +965,12 @@ button {
 .file-name-display.has-file {
     color: var(--primary);
     font-weight: 600;
+}
+
+.upload-guidance {
+    color: var(--muted);
+    font-size: 12px;
+    margin: -10px 0 16px 0;
 }
 
 .btn-upload {
