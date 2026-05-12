@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - My Basecamp</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body class="dashboard-page admin-page">
+    <div class="container-fluid">
+        <div class="top-navbar">
+            <div class="brand">ADMIN</div>
+            <div class="nav-actions">
+                <a href="/dashboard">Dashboard</a>
+                <button id="logoutBtn" class="logout-btn">Logout</button>
+            </div>
+        </div>
+
+        <div class="page-header">
+            <h1>Users</h1>
+        </div>
+
+        <div id="adminMessage" class="message-box"></div>
+        <div class="section-box">
+            <div id="usersList" class="admin-users-list">
+                <p class="empty-message">Loading users...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const messageBox = document.getElementById('adminMessage');
+
+        function showMessage(text, isError = false) {
+            messageBox.textContent = text;
+            messageBox.className = 'message-box is-visible ' + (isError ? 'error' : 'success');
+        }
+
+        async function requestJson(url, options = {}) {
+            const response = await fetch(url, options);
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.message || 'Request failed');
+            return result;
+        }
+
+        function renderUsers(users) {
+            const list = document.getElementById('usersList');
+            list.innerHTML = '';
+
+            if (users.length === 0) {
+                list.innerHTML = '<p class="empty-message">No users found.</p>';
+                return;
+            }
+
+            users.forEach((user) => {
+                const item = document.createElement('div');
+                item.className = 'admin-user-row';
+
+                const info = document.createElement('div');
+                info.className = 'admin-user-info';
+
+                const name = document.createElement('strong');
+                name.textContent = user.name;
+
+                const meta = document.createElement('span');
+                meta.textContent = `@${user.username} - ${user.email} - ${user.role}`;
+
+                info.append(name, meta);
+
+                const actions = document.createElement('div');
+                actions.className = 'admin-user-actions';
+
+                const adminButton = document.createElement('button');
+                adminButton.className = user.role === 'admin' ? 'member-role-button is-viewer-target' : 'member-role-button is-admin-target';
+                adminButton.textContent = user.role === 'admin' ? 'Remove Admin' : 'Make Admin';
+                adminButton.addEventListener('click', async () => {
+                    try {
+                        const method = user.role === 'admin' ? 'DELETE' : 'PATCH';
+                        const result = await requestJson(`/users/${user.id}/admin`, { method });
+                        showMessage(result.message);
+                        await loadUsers();
+                    } catch (err) {
+                        showMessage(err.message, true);
+                    }
+                });
+
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'member-remove-button';
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', async () => {
+                    if (!confirm(`Delete @${user.username}? Owned projects and uploads will also be deleted.`)) return;
+                    try {
+                        const result = await requestJson(`/users/${user.id}`, { method: 'DELETE' });
+                        showMessage(result.message);
+                        await loadUsers();
+                    } catch (err) {
+                        showMessage(err.message, true);
+                    }
+                });
+
+                actions.append(adminButton, deleteButton);
+                item.append(info, actions);
+                list.appendChild(item);
+            });
+        }
+
+        async function loadUsers() {
+            try {
+                const users = await requestJson('/admin/users');
+                renderUsers(users);
+            } catch (err) {
+                showMessage(err.message, true);
+                if (err.message.includes('Unauthorized') || err.message.includes('admin')) {
+                    setTimeout(() => { window.location.href = '/dashboard'; }, 900);
+                }
+            }
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await fetch('/sessions', { method: 'DELETE' });
+            window.location.href = '/login';
+        });
+
+        loadUsers();
+    </script>
+</body>
+</html>
