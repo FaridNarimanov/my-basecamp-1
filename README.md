@@ -1,239 +1,172 @@
-# Welcome to My Basecamp 1
-***
-
-## Task
-
-The goal of this project is to build a simplified Basecamp-style project management web application.
-
-The challenge was to create a working full-stack application where users can register, log in, create projects, manage project members, communicate inside projects, manage tasks, upload attachments, and view user profiles.
-
-This version follows the **My Basecamp 1** requirements, so the interface is kept simple and static: no hover effects, transitions, animations, transforms, or smooth scrolling.
+# My Basecamp 1
 
 ## Description
 
-My Basecamp 1 is a project collaboration platform built with **Node.js**, **Express**, **SQLite**, and plain HTML/CSS/JavaScript.
+My Basecamp 1 is a simplified Basecamp-style project management app built with Node.js, Express, SQLite, bcrypt, express-session, multer, and a plain HTML/CSS/JavaScript frontend.
 
-The application includes:
+The backend now follows an MVC structure and uses Sequelize as the ORM for SQLite instead of raw sqlite3 calls.
 
-- User registration and login
-- Login with either email or username
-- Password hashing with bcrypt
-- Session-based authentication
-- Project creation and editing
-- Project dashboard with filters:
-  - All projects
-  - Created by me
-  - Shared with me
-- Project roles:
-  - Owner
-  - Admin
-  - Viewer
-- Add members to a project by username
-- Change member roles between admin and viewer
-- Remove members from a project
-- Project discussion section
-- Project task section
-- Task completion system
-- Project attachment upload
-- Attachment deletion by owner/admin
-- Profile editing
+## Main Features
+
+- User registration
+- First registered user automatically becomes the first global admin
+- Login with email or username
+- Logout
+- Dashboard
+- Create, show, edit, and delete projects
+- Add project members by username
+- Remove project members
+- Change project member role between admin and viewer
+- Discussions
+- Tasks and task completion
+- Attachments with upload validation
+- Profile edit
 - Profile picture upload
-- Public user profile pages
-- Clicking a username opens that user's profile page
-- Profile page shows:
-  - Profile picture
-  - Full name
-  - Username
-  - Role
-  - Email
+- User profile page
+- User create, show, and destroy
+- Global admin set/remove
+- Simple admin page at `/admin`
 
-### Security Features
+## MVC Structure
 
-Several security improvements were added to make the application safer and more realistic.
+```text
+server.js
+config/
+  database.js
+models/
+  User.js
+  Project.js
+  ProjectMember.js
+  Discussion.js
+  Task.js
+  Attachment.js
+  index.js
+controllers/
+  authController.js
+  userController.js
+  adminController.js
+  projectController.js
+  memberController.js
+  discussionController.js
+  taskController.js
+  attachmentController.js
+  profileController.js
+routes/
+  authRoutes.js
+  userRoutes.js
+  adminRoutes.js
+  projectRoutes.js
+  profileRoutes.js
+middleware/
+  auth.js
+  projectAccess.js
+  upload.js
+utils/
+  projectCleanup.js
+  validation.js
+public/
+  admin.html
+  create_project.html
+  dashboard.html
+  edit_profile.html
+  edit_project.html
+  login.html
+  project.html
+  register.html
+  style.css
+  user_profile.html
+```
 
-Implemented protections include:
+`server.js` only initializes Express, configures middleware, serves static files, mounts routes, syncs Sequelize, and starts the server.
 
-- **SQL Injection protection**
-  - SQLite queries use parameterized statements instead of directly concatenating user input.
+## ORM
 
-- **Password security**
-  - Passwords are hashed using bcrypt before being stored in the database.
-  - Plain-text passwords are never stored.
+The app uses Sequelize with SQLite.
 
-- **Session protection**
-  - Sessions use `httpOnly` cookies.
-  - `sameSite: 'lax'` is enabled.
-  - Secure cookies are enabled automatically in production mode.
+Models:
 
-- **Authentication checks**
-  - Protected routes require the user to be logged in.
+- User
+- Project
+- ProjectMember
+- Discussion
+- Task
+- Attachment
 
-- **Project access control**
-  - Users can only access projects they own or projects where they are members.
+Associations include:
 
-- **IDOR protection**
-  - Task updates check whether the task belongs to a project the current user can access.
-  - Users cannot update tasks from projects they do not belong to.
+- User has many Projects
+- Project belongs to User as owner
+- Project belongs to many Users through ProjectMember
+- Project has many Discussions, Tasks, and Attachments
+- Discussion belongs to User
+- Attachment belongs to User as uploader
 
-- **Role tampering protection**
-  - Project member roles are validated on the backend.
-  - Only `admin` and `viewer` are accepted as member roles.
-  - Arbitrary roles such as `owner`, `superadmin`, or invalid text are rejected.
+## User Routes
 
-- **File upload protection**
-  - Upload size is limited to 5MB.
-  - Allowed attachment types:
-    - PNG
-    - JPEG
-    - WebP
-    - PDF
-  - Profile pictures only allow image files.
-  - File MIME type and extension must match.
-  - Uploaded files are saved with random safe filenames.
-  - Original filenames are cleaned before being stored for display.
+- `POST /users` creates a user
+- `GET /users/:id` shows a user without password hashes
+- `GET /api/users/:username` supports the frontend user profile page
+- `DELETE /users/:id` deletes a user when permitted
 
-- **Path traversal protection**
-  - File deletion is restricted to the `public/uploads` directory.
-  - Uploaded files are safely resolved before deletion.
+User deletion rules:
 
-- **XSS protection**
-  - User-controlled profile data is rendered safely using DOM methods and `textContent`.
-  - User profile images are only loaded from `/uploads/`.
-  - Invalid profile image paths fall back to a default avatar.
+- A user can delete their own account.
+- A global admin can delete any non-admin user.
+- The last remaining global admin cannot be deleted.
+- Owned projects are deleted with their members, discussions, tasks, attachments, and uploaded files.
+- Profile pictures and attachments are deleted only through safe paths inside `public/uploads`.
 
-- **Database cleanup**
-  - When a project is deleted, related project members, discussions, tasks, attachments, and uploaded files are cleaned up.
+## Global Admin Routes
+
+- `PATCH /users/:id/admin` makes a user a global admin
+- `DELETE /users/:id/admin` removes global admin status
+- `GET /admin/users` lists users for the admin page
+
+Only global admins can use admin actions. Project member roles are separate from the global `users.role`.
+
+## Security
+
+- Passwords are hashed with bcrypt
+- Passwords are not trimmed before hashing or comparison
+- Session cookies use `httpOnly` and `sameSite: 'lax'`
+- Sequelize model methods are used instead of raw SQL
+- Upload size is limited to 5MB
+- Attachments allow PNG, JPEG/JPG, WebP, and PDF
+- Profile pictures allow PNG, JPEG/JPG, and WebP
+- Stored upload filenames are random
+- Original filenames are cleaned before display
+- Upload deletion is restricted to `public/uploads`
+- Project access checks protect project routes
+- Task, attachment, member, and project routes include IDOR protection
 
 ## Installation
 
-Clone the repository and install dependencies:
-
 ```bash
 npm install
-````
-
-Required dependencies include:
-
-```bash
-express
-sqlite3
-bcrypt
-express-session
-multer
 ```
 
-The SQLite database file is created automatically when the server starts.
-You do not need to manually create the database.
-
-Start the server:
+## Usage
 
 ```bash
 node server.js
 ```
 
-The application will run on:
+Open:
 
-```bash
+```text
 http://localhost:8080
 ```
 
-## Usage
+Register the first user to create the first global admin. Later users are normal users by default.
 
-Open the app in your browser:
+Admin users are redirected to:
 
-```bash
-http://localhost:8080
+```text
+http://localhost:8080/admin
 ```
 
-### Main flow
-
-1. Register a new account.
-2. Log in using your email or username.
-3. Create a new project.
-4. Open the project from the dashboard.
-5. Add discussions, tasks, and attachments.
-6. Add other users to the project by username.
-7. Manage members from the project settings page.
-8. Click a username to view that user's profile.
-9. Edit your own profile and upload a profile picture.
-
-### Project Roles
-
-#### Owner
-
-The project creator is the owner.
-
-The owner can:
-
-* Edit project name and description
-* Delete the project
-* Add members
-* Remove members
-* Change member roles
-* Upload attachments
-* Delete attachments
-* Create discussions
-* Create and complete tasks
-
-#### Admin
-
-An admin can:
-
-* Edit project name and description
-* Add members
-* Remove members
-* Change member roles
-* Upload attachments
-* Delete attachments
-* Create discussions
-* Create and complete tasks
-
-#### Viewer
-
-A viewer can:
-
-* View the project
-* Read discussions
-* View tasks
-* View members
-* View attachments
-* Participate in project features allowed by the application
-
-## Project Structure
-
-```bash
-.
-├── server.js
-├── package.json
-├── public
-│   ├── create_project.html
-│   ├── dashboard.html
-│   ├── edit_profile.html
-│   ├── edit_project.html
-│   ├── login.html
-│   ├── project.html
-│   ├── register.html
-│   ├── style.css
-│   ├── user_profile.html
-│   └── uploads
-```
-
-## Database
-
-The project uses SQLite.
-
-The following tables are created automatically:
-
-* users
-* projects
-* project_members
-* discussions
-* tasks
-* attachments
-
-## The Core Team
+## Core Team
 
 Farid Narimanov
 
-<span><i>Made at <a href="https://qwasar.io">Qwasar SV -- Software Engineering School</a></i></span>
-<span><img alt="Qwasar SV -- Software Engineering School's Logo" src="https://storage.googleapis.com/qwasar-public/qwasar-logo_50x50.png" width="20px" /></span>
+Made at Qwasar SV - Software Engineering School.
