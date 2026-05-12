@@ -152,6 +152,15 @@ Admin notes:
 npm install
 ```
 
+## Runtime Files
+
+The following files/folders are generated locally and should not be committed:
+
+- `basecamp.db`
+- `public/uploads/`
+- `node_modules/`
+- `.env`
+
 ## Usage
 
 ```bash
