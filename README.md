@@ -1,15 +1,31 @@
 # My Basecamp 1
 
+My Basecamp 1 is a simplified Basecamp-style project management application built as part of the Qwasar curriculum.
+
+The project focuses on authentication, project management, MVC architecture, ORM usage, user/admin permissions, secure file uploads, and clean backend separation.
+
+## Tech Stack
+
+- Node.js
+- Express.js
+- SQLite
+- Sequelize ORM
+- bcrypt
+- express-session
+- multer
+- HTML
+- CSS
+- JavaScript
+
 ## Description
 
-My Basecamp 1 is a simplified Basecamp-style project management app built with Node.js, Express, SQLite, bcrypt, express-session, multer, and a plain HTML/CSS/JavaScript frontend.
+The app allows users to register, log in, create and manage projects, add members, assign project roles, create discussions and tasks, upload attachments, and manage user profiles.
 
-The backend now follows an MVC structure and uses Sequelize as the ORM for SQLite instead of raw sqlite3 calls.
+The backend follows an MVC-style structure and uses Sequelize as the ORM for SQLite instead of raw `sqlite3` queries.
 
 ## Main Features
 
 - User registration
-- First registered user automatically becomes the first global admin
 - Login with email or username
 - Logout
 - Dashboard
@@ -25,7 +41,15 @@ The backend now follows an MVC structure and uses Sequelize as the ORM for SQLit
 - User profile page
 - User create, show, and destroy
 - Global admin set/remove
-- Simple admin page at `/admin`
+- Admin panel at `/admin`
+
+## Admin System
+
+- The first registered user automatically becomes the first global admin.
+- Later users are created as normal users by default.
+- Global admins can manage users from the admin panel.
+- Normal users cannot access admin pages or admin API actions.
+- The last remaining global admin cannot be deleted or demoted.
 
 ## MVC Structure
 
@@ -75,7 +99,7 @@ public/
   register.html
   style.css
   user_profile.html
-```
+````
 
 `server.js` only initializes Express, configures middleware, serves static files, mounts routes, syncs Sequelize, and starts the server.
 
@@ -85,81 +109,74 @@ The app uses Sequelize with SQLite.
 
 Models:
 
-- User
-- Project
-- ProjectMember
-- Discussion
-- Task
-- Attachment
+* User
+* Project
+* ProjectMember
+* Discussion
+* Task
+* Attachment
 
 Associations include:
 
-- User has many Projects
-- Project belongs to User as owner
-- Project belongs to many Users through ProjectMember
-- Project has many Discussions, Tasks, and Attachments
-- Discussion belongs to User
-- Attachment belongs to User as uploader
+* User has many Projects
+* Project belongs to User as owner
+* Project belongs to many Users through ProjectMember
+* Project has many Discussions, Tasks, and Attachments
+* Discussion belongs to User
+* Attachment belongs to User as uploader
 
 ## User Routes
 
-- `POST /users` creates a user
-- `GET /users/:id` shows a user without password hashes
-- `GET /api/users/:username` supports the frontend user profile page
-- `DELETE /users/:id` deletes a user when permitted
+* `POST /users` creates a user
+* `GET /users/:id` shows a user without password hashes
+* `GET /api/users/:username` supports the frontend user profile page
+* `DELETE /users/:id` deletes a user when permitted
 
 User deletion rules:
 
-- A user can delete their own account.
-- A global admin can delete any non-admin user.
-- The last remaining global admin cannot be deleted.
-- Owned projects are deleted with their members, discussions, tasks, attachments, and uploaded files.
-- Profile pictures and attachments are deleted only through safe paths inside `public/uploads`.
+* A user can delete their own account.
+* A global admin can delete any non-admin user.
+* The last remaining global admin cannot be deleted.
+* Owned projects are deleted with their members, discussions, tasks, attachments, and uploaded files.
+* Profile pictures and attachments are deleted only through safe paths inside `public/uploads`.
 
 ## Global Admin Routes
 
-- `PATCH /users/:id/admin` makes a user a global admin
-- `DELETE /users/:id/admin` removes global admin status
-- `GET /admin/users` lists users for the admin page
+* `PATCH /users/:id/admin` makes a user a global admin
+* `DELETE /users/:id/admin` removes global admin status
+* `GET /admin/users` lists users for the admin page
 
-Only global admins can use admin actions. Project member roles are separate from the global `users.role`.
-
-Admin notes:
-
-- If no global admin exists yet, the first registered user becomes the global admin automatically.
-- Global admins can manage users from the admin panel at `/admin`.
-- Normal users cannot access the admin panel or admin API actions.
+Project member roles are separate from the global `users.role`.
 
 ## Security
 
-- Passwords are hashed with bcrypt
-- Passwords are not trimmed before hashing or comparison
-- Session cookies use `httpOnly` and `sameSite: 'lax'`
-- Sequelize model methods are used instead of raw SQL
-- Upload size is limited to 5MB
-- Attachments allow PNG, JPEG/JPG, WebP, and PDF
-- Profile pictures allow PNG, JPEG/JPG, and WebP
-- Attachment uploads are limited to PNG, JPG/JPEG, WebP, or PDF files with a maximum size of 5MB
-- Stored upload filenames are random
-- Original filenames are cleaned before display
-- Upload deletion is restricted to `public/uploads`
-- Project access checks protect project routes
-- Task, attachment, member, and project routes include IDOR protection
+* Passwords are hashed with bcrypt.
+* Passwords are not trimmed before hashing or comparison.
+* Session cookies use `httpOnly` and `sameSite: 'lax'`.
+* Sequelize model methods are used instead of raw SQL.
+* Upload size is limited to 5MB.
+* Attachments allow PNG, JPEG/JPG, WebP, and PDF.
+* Profile pictures allow PNG, JPEG/JPG, and WebP.
+* Stored upload filenames are random.
+* Original filenames are cleaned before display.
+* Upload deletion is restricted to `public/uploads`.
+* Project access checks protect project routes.
+* Task, attachment, member, and project routes include IDOR protection.
+
+## Runtime Files
+
+The following files and folders are generated locally and should not be committed:
+
+* `basecamp.db`
+* `public/uploads/`
+* `node_modules/`
+* `.env`
 
 ## Installation
 
 ```bash
 npm install
 ```
-
-## Runtime Files
-
-The following files/folders are generated locally and should not be committed:
-
-- `basecamp.db`
-- `public/uploads/`
-- `node_modules/`
-- `.env`
 
 ## Usage
 
@@ -175,7 +192,7 @@ http://localhost:8080
 
 Register the first user to create the first global admin. Later users are normal users by default.
 
-Admin users are redirected to:
+Admin users can access:
 
 ```text
 http://localhost:8080/admin
@@ -183,6 +200,8 @@ http://localhost:8080/admin
 
 ## Core Team
 
-Farid Narimanov
+* Farid Narimanov
 
-Made at Qwasar SV - Software Engineering School.
+## Note
+
+Educational project built as part of the Qwasar My Basecamp curriculum.
